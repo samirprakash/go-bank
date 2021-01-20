@@ -29,4 +29,8 @@
 
 ### DB migration
 
--
+- Execute `brew install golang-migrate`
+- Execute `migrate -version` to verify that the tool has been installed
+- Execute `migrate create -ext sql -dir db/migration -seq init_schema` to generate migration dumps
+- `*.up.sql` is used to migrate up to a new version using `migrate up`
+- `*.down.sql` is used to migrate down to an older version using `migrate down`
