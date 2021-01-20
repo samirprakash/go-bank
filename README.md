@@ -11,6 +11,15 @@
 - Money transfer transaction
   - Perform money transfer between 2 accounts consistently within a transaction
 
+### Development
+
+- Execute `make postgres` to run postgres container on local docker setup
+- Execute `make createdb` to create the `simple_bank` database
+- Execute `make migrateup` to setup tables and initial database state
+- If required,
+  - Execute `make dropdb` to drop database
+  - Execute `make migratedown` to migrate or revert database state to a previous version
+
 ### Database Design
 
 - Design DB schema using dbdiagram.io
@@ -31,6 +40,9 @@
 
 - Execute `brew install golang-migrate`
 - Execute `migrate -version` to verify that the tool has been installed
-- Execute `migrate create -ext sql -dir db/migration -seq init_schema` to generate migration dumps
+- Execute `migrate create -ext sql -dir db/migration -seq init_schema` to generate migration files
 - `*.up.sql` is used to migrate up to a new version using `migrate up`
 - `*.down.sql` is used to migrate down to an older version using `migrate down`
+- Execute `make migrateup` to migrate data upwards to a new version
+- Execute `make migratedown` to revert migration to a previous version
+- Manage migrations in future with `migrtion up/down` commands
