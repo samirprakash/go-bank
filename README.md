@@ -11,6 +11,11 @@
 - Money transfer transaction
   - Perform money transfer between 2 accounts consistently within a transaction
 
+### Pre-requisites
+
+- Install `docker for desktop`
+- Execute `brew install golang-migrate sqlc`
+
 ### Database Design
 
 - Design DB schema using dbdiagram.io
@@ -20,7 +25,6 @@
 
 ### Docker and Postgres
 
-- Install `docker for desktop` locally
 - Execute `docker pull postgres:12-alpine` to get the postgres image
 - Execute `docker run --name postgres12 -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:12-alpine` to run the postgres container
 - Execute `docker logs postgres12` to see the logs
@@ -29,11 +33,12 @@
 
 ### DB migration
 
-- Execute `brew install golang-migrate`
-- Execute `migrate -version` to verify that the tool has been installed
+- Execute `migrate -version` to verify that the `golang-migrate` has been installed
 - Execute `migrate create -ext sql -dir db/migration -seq init_schema` to generate migration files
-- `*.up.sql` is used to migrate up to a new version using `migrate up`
-- `*.down.sql` is used to migrate down to an older version using `migrate down`
+  - `*.up.sql` is used to migrate up to a new version using `migrate up`
+  - `*.down.sql` is used to migrate down to an older version using `migrate down`
+  - Copy the sql quesries generated from `dbdiagram.io` to `*.up.sql`
+  - Add `DROP TABLE` queries to `*.down.sql`
 - Execute `make migrateup` to migrate data upwards to a new version
 - Execute `make migratedown` to revert migration to a previous version
 - Manage migrations in future with `migrtion up/down` commands
@@ -49,4 +54,4 @@
 
 ### Generate CRUD Golang code from SQL
 
-- Execute `brew install sqlc`
+- Execute `make sqlc` to auto generate CRUD functionalities
