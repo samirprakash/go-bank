@@ -19,7 +19,7 @@
 ### Database Design
 
 - Design DB schema using dbdiagram.io
-  - Export the queries onto `/sql`
+  - Export the queries onto `/dbdiagrams.io`
 - Save and share DB diagram within the team
 - Generate SQL code to create database in a target database engine i.e. postgres/MySQL/SQLServer
 
@@ -29,7 +29,7 @@
 - Execute `docker run --name postgres12 -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:12-alpine` to run the postgres container
 - Execute `docker logs postgres12` to see the logs
 - Execute `docker exec -it postgres12 psql -U root` to connect to the postgres container and login as `root` user
-- Connect to postgres container and execute the queries from `/sql` to create the tables
+- Connect to postgres container and execute the queries from `/dbdiagrams.io` to create the tables
 
 ### DB migration
 
