@@ -44,3 +44,63 @@ func (store *Store) execTx(ctx context.Context, fn func(*Queries) error) error {
 	// commit if everything works
 	return tx.Commit()
 }
+
+// TransferTxParams represents the arguments required to execute the transfer transaction
+type TransferTxParams struct {
+	FromAccountID int64 `json:"from_account_id,omitempty"`
+	ToAccountID   int64 `json:"to_account_id,omitempty"`
+	Amount        int64 `json:"amount,omitempty"`
+}
+
+// TransferTxResult represents the result of the transfer transaction
+type TransferTxResult struct {
+	Transfer    Transfer `json:"transfer,omitempty"`
+	FromAccount Account  `json:"from_account,omitempty"`
+	ToAccount   Account  `json:"to_account,omitempty"`
+	FromEntry   Entry    `json:"from_entry,omitempty"`
+	ToEntry     Entry    `json:"to_entry,omitempty"`
+}
+
+// TransferTx performs a money transfer from one account to another.
+// It executes a database transaction to create a transfer record, update account entries and update the account balance.
+func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error) {
+	var result TransferTxResult
+
+	err := store.execTx(ctx, func(q *Queries) error {
+		var err error
+
+		// create a transfer query and execute it
+		result.Transfer, err = q.CreateTransfer(ctx, CreateTransferParams{
+			FromAccountID: arg.FromAccountID,
+			ToAccountID:   arg.ToAccountID,
+			Amount:        arg.Amount,
+		})
+		if err != nil {
+			return err
+		}
+
+		// create an entry for the account from which money has been transferred
+		result.FromEntry, err = q.CreateEntry(ctx, CreateEntryParams{
+			AccountID: arg.FromAccountID,
+			Amount:    -arg.Amount,
+		})
+		if err != nil {
+			return err
+		}
+
+		// create an entry for the acoount to which the money has been transferred
+		result.ToEntry, err = q.CreateEntry(ctx, CreateEntryParams{
+			AccountID: arg.ToAccountID,
+			Amount:    arg.Amount,
+		})
+		if err != nil {
+			return err
+		}
+
+		// TODO: Update account balance
+
+		return nil
+	})
+
+	return result, err
+}
