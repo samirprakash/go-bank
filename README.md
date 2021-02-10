@@ -1,5 +1,7 @@
 # A Simple Bank
 
+![ci-test](https://github.com/samirprakash/go-bank/workflows/ci-test/badge.svg?branch=main)
+
 ### Features
 
 - Create and manage account
