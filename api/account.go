@@ -70,3 +70,35 @@ func (server *Server) getAccount(ctx *gin.Context) {
 	// return the account
 	ctx.JSON(http.StatusOK, account)
 }
+
+type listAccountsRequest struct {
+	PageID   int32 `form:"page_id" binding:"required,min=1"`
+	PageSize int32 `form:"page_size" binding:"required,min=5,max=10"`
+}
+
+func (server *Server) listAccounts(ctx *gin.Context) {
+	var req listAccountsRequest
+
+	// validate query params
+	if err := ctx.ShouldBindQuery(&req); err != nil {
+		// return 400 if bad request
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	arg := db.ListAccountsParams{
+		Limit:  req.PageSize,
+		Offset: (req.PageID - 1) * req.PageSize,
+	}
+
+	// get all accounts as per limit and offset
+	accounts, err := server.store.ListAccounts(ctx, arg)
+	if err != nil {
+		// return 500 if internal error
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	// return the list of accounts
+	ctx.JSON(http.StatusOK, accounts)
+}
