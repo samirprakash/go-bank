@@ -3,6 +3,7 @@ package api
 import (
 	"database/sql"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	db "github.com/samirprakash/go-bank/db/sqlc"
@@ -101,4 +102,56 @@ func (server *Server) listAccounts(ctx *gin.Context) {
 
 	// return the list of accounts
 	ctx.JSON(http.StatusOK, accounts)
+}
+
+type updateAccountBalanceRequest struct {
+	Amount int64 `json:"amount" binding:"required,min=1,max=10000"`
+}
+
+func (server *Server) updateAccountBalance(ctx *gin.Context) {
+	var req updateAccountBalanceRequest
+
+	// validate path param id
+	id, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		// return 400 if bad request
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	// Account ID must not be less than 1
+	if id < 1 {
+		// return 400 if bad request
+		ctx.JSON(http.StatusBadRequest, "Invalid ID")
+		return
+	}
+
+	// validate requets body
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		// return 400 if bad request
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	arg := db.UpdateAccountBalanceParams{
+		Amount: req.Amount,
+		ID:     int64(id),
+	}
+
+	// update account balance in db
+	account, err := server.store.UpdateAccountBalance(ctx, arg)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// reeturn 404 if account not found
+			ctx.JSON(http.StatusNotFound, errorResponse(err))
+			return
+		}
+
+		// return 500 if internal error
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	// return the account with updated balance
+	ctx.JSON(http.StatusOK, account)
 }
