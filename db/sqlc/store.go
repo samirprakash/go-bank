@@ -9,14 +9,22 @@ import (
 // Store provides all functions to execute db queries and transactions.
 // We need to extend on the exisiting *Queries struct that sqlc provides as it only supports executing queries on one table at a time.
 // In order to execute transactions, we will use store to create a set of quesries to be executed in sequence
-type Store struct {
-	*Queries
+type Store interface {
+	Querier
+	TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error)
+}
+
+// SQLStore provides all functions to execute SQL queries and transactions.
+// We need to extend on the exisiting *Queries struct that sqlc provides as it only supports executing queries on one table at a time.
+// In order to execute transactions, we will use store to create a set of quesries to be executed in sequence
+type SQLStore struct {
 	db *sql.DB
+	*Queries
 }
 
 // NewStore creates a new store
-func NewStore(db *sql.DB) *Store {
-	return &Store{
+func NewStore(db *sql.DB) Store {
+	return &SQLStore{
 		Queries: New(db),
 		db:      db,
 	}
@@ -26,7 +34,7 @@ func NewStore(db *sql.DB) *Store {
 // This function is added on to the store and it takes context and a callback function as parameters.
 // When we start a new transaction, we will create a set of queries and then call the callback function with those queries to execute the transaction.
 // If there is a problem, then there is an option to rollback or else the transaction can be committed.
-func (store *Store) execTx(ctx context.Context, fn func(*Queries) error) error {
+func (store *SQLStore) execTx(ctx context.Context, fn func(*Queries) error) error {
 	tx, err := store.db.BeginTx(ctx, nil)
 	if err != nil {
 		return err
@@ -63,7 +71,7 @@ type TransferTxResult struct {
 
 // TransferTx performs a money transfer from one account to another.
 // It executes a database transaction to create a transfer record, update account entries and update the account balance.
-func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error) {
+func (store *SQLStore) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error) {
 	var result TransferTxResult
 
 	err := store.execTx(ctx, func(q *Queries) error {
