@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// createRandomTransfer creates a random transfer to be used in the tests
 func createRandomTransfer(t *testing.T) Transfer {
 	account1 := createRandomAccount(t)
 	account2 := createRandomAccount(t)

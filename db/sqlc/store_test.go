@@ -141,18 +141,18 @@ func TestTransferTxDeadlock(t *testing.T) {
 	// execute transactions in goroutines and
 	// send errors and results back to the main gorutine for validations
 	for i := 0; i < n; i++ {
-		fromAccountId := account1.ID
-		toAccountId := account2.ID
+		fromAccountID := account1.ID
+		toAccountID := account2.ID
 
 		if i%2 == 1 {
-			fromAccountId = account2.ID
-			toAccountId = account1.ID
+			fromAccountID = account2.ID
+			toAccountID = account1.ID
 		}
 
 		go func() {
 			_, err := store.TransferTx(context.Background(), TransferTxParams{
-				FromAccountID: fromAccountId,
-				ToAccountID:   toAccountId,
+				FromAccountID: fromAccountID,
+				ToAccountID:   toAccountID,
 				Amount:        amount,
 			})
 
