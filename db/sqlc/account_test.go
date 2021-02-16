@@ -12,8 +12,10 @@ import (
 
 // createRandomAccount creates a random account to be used in tests
 func createRandomAccount(t *testing.T) Account {
+	user := createRandomUser(t)
+
 	arg := CreateAccountParams{
-		Owner:    util.RandomOwnerName(),
+		Owner:    user.Username,
 		Balance:  util.RandomAmount(),
 		Currency: util.RandomCurrency(),
 	}
@@ -98,5 +100,4 @@ func TestListAccounts(t *testing.T) {
 	for _, account := range accounts {
 		require.NotEmpty(t, account)
 	}
-
 }
