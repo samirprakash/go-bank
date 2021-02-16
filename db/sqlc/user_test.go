@@ -11,9 +11,13 @@ import (
 
 // createRandomUser creates a random user to be used in tests
 func createRandomUser(t *testing.T) User {
+	hashedPassword, err := util.HashPassword(util.RandomString(6))
+	require.NoError(t, err)
+	require.NotEmpty(t, hashedPassword)
+
 	arg := CreateUserParams{
 		Username:       util.RandomOwnerName(),
-		HashedPassword: "secret",
+		HashedPassword: hashedPassword,
 		FullName:       util.RandomOwnerName(),
 		Email:          util.RandomEmail(),
 	}
