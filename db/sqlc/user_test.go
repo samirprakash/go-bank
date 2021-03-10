@@ -11,6 +11,7 @@ import (
 
 // createRandomUser creates a random user to be used in tests
 func createRandomUser(t *testing.T) User {
+	// generate a hashed password
 	hashedPassword, err := util.HashPassword(util.RandomString(6))
 	require.NoError(t, err)
 	require.NotEmpty(t, hashedPassword)
