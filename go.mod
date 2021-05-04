@@ -10,6 +10,7 @@ require (
 	github.com/golang/mock v1.4.4
 	github.com/google/uuid v1.2.0
 	github.com/lib/pq v1.9.0
+	github.com/o1egl/paseto v1.0.0 // indirect
 	github.com/pelletier/go-toml v1.8.1 // indirect
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.7.0
