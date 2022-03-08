@@ -17,6 +17,7 @@
 
 - Install `docker for desktop`
 - Execute `brew install golang-migrate sqlc`
+- Execute `go install github.com/golang/mock/mockgen@v1.6.0`
 
 ### Database Design
 
@@ -57,3 +58,4 @@
 ### Generate CRUD Golang code from SQL
 
 - Execute `make sqlc` to auto generate CRUD functionalities
+- Execute `make mock` to generate mock DB
