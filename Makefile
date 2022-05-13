@@ -19,6 +19,12 @@ sqlc:
 test:
 	go test -v -cover ./...
 
+tidy:
+	go mod tidy
+
+vendor:
+	go mod vendor
+
 server:
 	go run main.go
 

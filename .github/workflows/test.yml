@@ -45,5 +45,11 @@ jobs:
       - name: Run migrations
         run: make migrateup
 
+      - name: Tidy dependencies
+        run: make tidy
+
+      - name: Update vendor
+        run: make vendor
+
       - name: Run tests
         run: make test
